@@ -3,118 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Меню Бомбера</title>
+    <title>Бомбер Панель</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 20px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 16px;
             min-height: 100vh;
         }
-        
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
+        .container { max-width: 500px; margin: 0 auto; }
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 20px;
+            margin-bottom: 20px;
             color: white;
         }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-        
-        .stats-card {
-            background: var(--tg-theme-secondary-bg-color);
-            border-radius: 16px;
-            padding: 20px;
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--tg-theme-hint-color);
+        .stat-card {
+            background: var(--tg-theme-secondary-bg-color);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
         }
-        
-        .stats-row:last-child {
-            border-bottom: none;
-        }
-        
-        .stats-label {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        
-        .stats-value {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
+        .stat-value { font-size: 28px; font-weight: bold; }
+        .stat-label { font-size: 12px; opacity: 0.7; margin-top: 5px; }
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 20px;
         }
-        
-        .menu-btn {
+        button {
             background: var(--tg-theme-button-color);
             color: var(--tg-theme-button-text-color);
             border: none;
-            padding: 16px;
+            padding: 14px;
             border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            transition: transform 0.1s;
         }
-        
-        .menu-btn:active {
-            transform: scale(0.96);
-        }
-        
-        .menu-emoji {
-            font-size: 28px;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        
+        button:active { transform: scale(0.97); }
+        .full-btn { width: 100%; margin-bottom: 10px; }
+        .danger-btn { background: #e74c3c; color: white; }
+        .input-group { margin-bottom: 15px; }
         input, select {
             width: 100%;
             padding: 12px;
@@ -123,36 +67,8 @@
             background: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
             font-size: 16px;
-            box-sizing: border-box;
         }
-        
-        .full-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            margin-bottom: 10px;
-        }
-        
-        .btn-primary {
-            background: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-        }
-        
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: var(--tg-theme-secondary-bg-color);
-            color: var(--tg-theme-text-color);
-            border: 1px solid var(--tg-theme-hint-color);
-        }
-        
+        .hidden { display: none; }
         .toast {
             position: fixed;
             bottom: 20px;
@@ -164,274 +80,138 @@
             border-radius: 30px;
             font-size: 14px;
             z-index: 1000;
-            transition: opacity 0.3s;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .section {
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            padding-left: 8px;
-            border-left: 4px solid var(--tg-theme-button-color);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💣 БОМБЕР V13.5</h1>
-            <p>Управление ботом</p>
-        </div>
-        
-        <div id="mainView">
-            <div class="stats-card">
-                <div class="stats-row">
-                    <span class="stats-label">👥 Жертв в базе</span>
-                    <span class="stats-value" id="totalUsers">0</span>
-                </div>
-                <div class="stats-row">
-                    <span class="stats-label">💣 Всего бомбежей</span>
-                    <span class="stats-value" id="totalBombs">0</span>
-                </div>
-                <div class="stats-row">
-                    <span class="stats-label">📨 Отправлено сообщений</span>
-                    <span class="stats-value" id="totalMessages">0</span>
-                </div>
-                <div class="stats-row">
-                    <span class="stats-label">🚫 В черном списке</span>
-                    <span class="stats-value" id="blacklistCount">0</span>
-                </div>
-            </div>
-            
-            <div class="menu-grid">
-                <button class="menu-btn" onclick="sendCommand('bomb')">
-                    <span class="menu-emoji">💣</span>
-                    <span>БОМБЕЖ</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('victims')">
-                    <span class="menu-emoji">👥</span>
-                    <span>СПИСОК</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('mass')">
-                    <span class="menu-emoji">🎯</span>
-                    <span>МАССОВЫЙ</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('stats')">
-                    <span class="menu-emoji">📊</span>
-                    <span>СТАТИСТИКА</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('settings')">
-                    <span class="menu-emoji">⚙️</span>
-                    <span>НАСТРОЙКИ</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('stop')">
-                    <span class="menu-emoji">🛑</span>
-                    <span>СТОП ВСЕ</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('link')">
-                    <span class="menu-emoji">🔗</span>
-                    <span>ПРИГЛАСИТЬ</span>
-                </button>
-                <button class="menu-btn" onclick="sendCommand('help')">
-                    <span class="menu-emoji">❓</span>
-                    <span>ПОМОЩЬ</span>
-                </button>
-            </div>
-            
-            <div class="section">
-                <div class="section-title">⚡ БЫСТРЫЕ ДЕЙСТВИЯ</div>
-                <button class="full-btn btn-primary" onclick="showBombForm()">💣 ЗАПУСТИТЬ БОМБЕЖ</button>
-                <button class="full-btn btn-secondary" onclick="showAddVictimForm()">➕ ДОБАВИТЬ ЖЕРТВУ</button>
-                <button class="full-btn btn-secondary" onclick="showScheduleForm()">📅 ДОБАВИТЬ В РАСПИСАНИЕ</button>
-                <button class="full-btn btn-danger" onclick="sendCommand('stopall')">🛑 ОСТАНОВИТЬ ВСЕ</button>
-            </div>
-        </div>
-        
-        <div id="bombForm" class="hidden">
-            <div class="section">
-                <div class="section-title">💣 ЗАПУСК БОМБЕЖА</div>
-                <div class="input-group">
-                    <label>👤 ID жертвы или @username</label>
-                    <input type="text" id="bombTarget" placeholder="@username или 123456789">
-                </div>
-                <div class="input-group">
-                    <label>⚡ Режим</label>
-                    <select id="bombMode">
-                        <option value="normal">НОРМАЛЬНЫЙ (1 сек, 100 сообщ)</option>
-                        <option value="fast">БЫСТРЫЙ (0.5 сек, 200 сообщ)</option>
-                        <option value="extreme">ЭКСТРИМ (0.3 сек, 500 сообщ)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>📝 Текст сообщения</label>
-                    <input type="text" id="bombText" placeholder="💣 ТЫ ПОПАЛСЯ! 💣">
-                </div>
-                <button class="full-btn btn-primary" onclick="sendBomb()">💣 ЗАПУСТИТЬ</button>
-                <button class="full-btn btn-secondary" onclick="showMainView()">◀️ НАЗАД</button>
-            </div>
-        </div>
-        
-        <div id="addVictimForm" class="hidden">
-            <div class="section">
-                <div class="section-title">➕ ДОБАВИТЬ ЖЕРТВУ</div>
-                <div class="input-group">
-                    <label>🆔 ID жертвы</label>
-                    <input type="text" id="victimId" placeholder="123456789">
-                </div>
-                <div class="input-group">
-                    <label>📛 Имя жертвы (необязательно)</label>
-                    <input type="text" id="victimName" placeholder="Имя">
-                </div>
-                <button class="full-btn btn-primary" onclick="addVictim()">➕ ДОБАВИТЬ</button>
-                <button class="full-btn btn-secondary" onclick="showMainView()">◀️ НАЗАД</button>
-            </div>
-        </div>
-        
-        <div id="scheduleForm" class="hidden">
-            <div class="section">
-                <div class="section-title">📅 ПЛАНОВАЯ АТАКА</div>
-                <div class="input-group">
-                    <label>⏱ Время (ЧЧ:ММ)</label>
-                    <input type="text" id="scheduleTime" placeholder="14:30">
-                </div>
-                <div class="input-group">
-                    <label>👤 ID жертвы (пусто = все)</label>
-                    <input type="text" id="scheduleTarget" placeholder="@username или 123456789">
-                </div>
-                <button class="full-btn btn-primary" onclick="addSchedule()">📅 ДОБАВИТЬ</button>
-                <button class="full-btn btn-secondary" onclick="showMainView()">◀️ НАЗАД</button>
-            </div>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1>💣 БОМБЕР V14</h1>
+        <p>Управление ботом</p>
     </div>
-    
-    <div id="toast" class="toast hidden"></div>
-    
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.enableClosingConfirmation();
-        
-        let statsData = {};
-        
-        function showToast(msg, duration = 2000) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, duration);
-        }
-        
-        function showMainView() {
-            document.getElementById('mainView').classList.remove('hidden');
-            document.getElementById('bombForm').classList.add('hidden');
-            document.getElementById('addVictimForm').classList.add('hidden');
-            document.getElementById('scheduleForm').classList.add('hidden');
-        }
-        
-        function showBombForm() {
-            document.getElementById('mainView').classList.add('hidden');
-            document.getElementById('bombForm').classList.remove('hidden');
-        }
-        
-        function showAddVictimForm() {
-            document.getElementById('mainView').classList.add('hidden');
-            document.getElementById('addVictimForm').classList.remove('hidden');
-        }
-        
-        function showScheduleForm() {
-            document.getElementById('mainView').classList.add('hidden');
-            document.getElementById('scheduleForm').classList.remove('hidden');
-        }
-        
-        function sendCommand(cmd) {
-            tg.sendData(JSON.stringify({ action: cmd }));
-            showToast(`✅ Команда "${cmd}" отправлена`);
-            setTimeout(() => tg.close(), 1000);
-        }
-        
-        function sendBomb() {
-            const target = document.getElementById('bombTarget').value;
-            const mode = document.getElementById('bombMode').value;
-            const text = document.getElementById('bombText').value || '💣 БОМБА! 💣';
-            
-            if (!target) {
-                showToast('❌ Введите цель!');
-                return;
-            }
-            
-            tg.sendData(JSON.stringify({
-                action: 'bomb',
-                target: target,
-                mode: mode,
-                text: text
-            }));
-            showToast('💣 Бомбеж запущен!');
-            setTimeout(() => tg.close(), 1500);
-        }
-        
-        function addVictim() {
-            const id = document.getElementById('victimId').value;
-            const name = document.getElementById('victimName').value;
-            
-            if (!id) {
-                showToast('❌ Введите ID!');
-                return;
-            }
-            
-            tg.sendData(JSON.stringify({
-                action: 'add_victim',
-                id: id,
-                name: name
-            }));
-            showToast('✅ Жертва добавлена!');
-            setTimeout(() => tg.close(), 1000);
-        }
-        
-        function addSchedule() {
-            const time = document.getElementById('scheduleTime').value;
-            const target = document.getElementById('scheduleTarget').value;
-            
-            if (!time) {
-                showToast('❌ Введите время!');
-                return;
-            }
-            
-            tg.sendData(JSON.stringify({
-                action: 'schedule',
-                time: time,
-                target: target
-            }));
-            showToast('📅 Атака запланирована!');
-            setTimeout(() => tg.close(), 1000);
-        }
-        
-        tg.onEvent('viewportChanged', () => {
-            tg.expand();
-        });
-        
-        tg.MainButton.setText('📊 ОБНОВИТЬ');
-        tg.MainButton.onClick(() => {
-            tg.sendData(JSON.stringify({ action: 'get_stats' }));
-        });
-        tg.MainButton.show();
-        
-        tg.BackButton.onClick(() => {
-            showMainView();
-            tg.BackButton.hide();
-        });
-        
-        // Запрос статистики при открытии
-        tg.sendData(JSON.stringify({ action: 'get_stats' }));
-    </script>
+
+    <div id="mainView">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="statUsers">0</div><div class="stat-label">Жертв</div></div>
+            <div class="stat-card"><div class="stat-value" id="statBombs">0</div><div class="stat-label">Бомбежей</div></div>
+            <div class="stat-card"><div class="stat-value" id="statMsgs">0</div><div class="stat-label">Сообщений</div></div>
+            <div class="stat-card"><div class="stat-value" id="statBlack">0</div><div class="stat-label">В ЧС</div></div>
+        </div>
+
+        <div class="menu-grid">
+            <button onclick="showBombForm()">💣 БОМБЕЖ</button>
+            <button onclick="sendAction('victims')">👥 ЖЕРТВЫ</button>
+            <button onclick="sendAction('mass')">🎯 МАССОВЫЙ</button>
+            <button onclick="sendAction('stats')">📊 СТАТИСТИКА</button>
+            <button onclick="sendAction('settings')">⚙️ НАСТРОЙКИ</button>
+            <button onclick="sendAction('stop')">🛑 СТОП ВСЕ</button>
+        </div>
+
+        <button class="full-btn" onclick="showAddVictimForm()">➕ ДОБАВИТЬ ЖЕРТВУ</button>
+        <button class="full-btn" onclick="showScheduleForm()">📅 ПЛАНОВАЯ АТАКА</button>
+    </div>
+
+    <div id="bombForm" class="hidden">
+        <h3>💣 ЗАПУСК БОМБЕЖА</h3>
+        <div class="input-group"><input type="text" id="bombTarget" placeholder="@username или ID"></div>
+        <div class="input-group"><select id="bombMode"><option value="normal">НОРМАЛЬНЫЙ (1 сек)</option><option value="fast">БЫСТРЫЙ (0.5 сек)</option><option value="extreme">ЭКСТРИМ (0.3 сек)</option></select></div>
+        <div class="input-group"><input type="text" id="bombText" placeholder="💣 БОМБА! 💣"></div>
+        <button class="full-btn" onclick="sendBomb()">💣 ЗАПУСТИТЬ</button>
+        <button class="full-btn" onclick="showMain()">◀️ НАЗАД</button>
+    </div>
+
+    <div id="addVictimForm" class="hidden">
+        <h3>➕ ДОБАВИТЬ ЖЕРТВУ</h3>
+        <div class="input-group"><input type="text" id="victimId" placeholder="ID"></div>
+        <div class="input-group"><input type="text" id="victimName" placeholder="Имя (опционально)"></div>
+        <button class="full-btn" onclick="addVictim()">➕ ДОБАВИТЬ</button>
+        <button class="full-btn" onclick="showMain()">◀️ НАЗАД</button>
+    </div>
+
+    <div id="scheduleForm" class="hidden">
+        <h3>📅 ПЛАНОВАЯ АТАКА</h3>
+        <div class="input-group"><input type="text" id="scheduleTime" placeholder="ЧЧ:ММ"></div>
+        <div class="input-group"><input type="text" id="scheduleTarget" placeholder="ID (пусто = все)"></div>
+        <button class="full-btn" onclick="addSchedule()">📅 ДОБАВИТЬ</button>
+        <button class="full-btn" onclick="showMain()">◀️ НАЗАД</button>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function showToast(msg, dur=2000) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.remove('hidden');
+        setTimeout(() => t.classList.add('hidden'), dur);
+    }
+
+    function showMain() {
+        document.getElementById('mainView').classList.remove('hidden');
+        document.getElementById('bombForm').classList.add('hidden');
+        document.getElementById('addVictimForm').classList.add('hidden');
+        document.getElementById('scheduleForm').classList.add('hidden');
+    }
+
+    function showBombForm() {
+        document.getElementById('mainView').classList.add('hidden');
+        document.getElementById('bombForm').classList.remove('hidden');
+    }
+
+    function showAddVictimForm() {
+        document.getElementById('mainView').classList.add('hidden');
+        document.getElementById('addVictimForm').classList.remove('hidden');
+    }
+
+    function showScheduleForm() {
+        document.getElementById('mainView').classList.add('hidden');
+        document.getElementById('scheduleForm').classList.remove('hidden');
+    }
+
+    function sendAction(action) {
+        tg.sendData(JSON.stringify({ action: action }));
+        showToast(`✅ ${action} отправлено`);
+        setTimeout(() => tg.close(), 1000);
+    }
+
+    function sendBomb() {
+        const target = document.getElementById('bombTarget').value;
+        const mode = document.getElementById('bombMode').value;
+        const text = document.getElementById('bombText').value || '💣 БОМБА!';
+        if (!target) { showToast('❌ Введите цель!'); return; }
+        tg.sendData(JSON.stringify({ action: 'bomb', target: target, mode: mode, text: text }));
+        showToast('💣 Бомбеж запущен!');
+        setTimeout(() => tg.close(), 1500);
+    }
+
+    function addVictim() {
+        const id = document.getElementById('victimId').value;
+        const name = document.getElementById('victimName').value;
+        if (!id) { showToast('❌ Введите ID!'); return; }
+        tg.sendData(JSON.stringify({ action: 'add_victim', id: id, name: name }));
+        showToast('✅ Жертва добавлена!');
+        setTimeout(() => tg.close(), 1000);
+    }
+
+    function addSchedule() {
+        const time = document.getElementById('scheduleTime').value;
+        const target = document.getElementById('scheduleTarget').value;
+        if (!time) { showToast('❌ Введите время!'); return; }
+        tg.sendData(JSON.stringify({ action: 'schedule', time: time, target: target }));
+        showToast('📅 Атака запланирована!');
+        setTimeout(() => tg.close(), 1000);
+    }
+
+    tg.onEvent('viewportChanged', () => tg.expand());
+    tg.MainButton.setText('📊 ОБНОВИТЬ');
+    tg.MainButton.onClick(() => tg.sendData(JSON.stringify({ action: 'get_stats' })));
+    tg.MainButton.show();
+    tg.sendData(JSON.stringify({ action: 'get_stats' }));
+</script>
 </body>
 </html>
